@@ -1,0 +1,15 @@
+$counter = 0
+$countc = 0
+Get-ChildItem *.* -Recurse | ForEach-Object {
+	$counter++
+	if (($_ | Get-Item -stream MD5 -ErrorAction SilentlyContinue | Select-Object -expandproperty Stream) -eq "MD5") {
+		if(($_ | Get-Content -stream MD5) -ne ($_ | Get-Filehash -a md5).Hash) {
+			Write-Output "Difference found in $_"
+		} else {
+		$countc++
+		}
+	} else {
+	Write-Output "No stream present for $_"
+	}
+}
+write-output "$counter files verified, $countc files ok"
