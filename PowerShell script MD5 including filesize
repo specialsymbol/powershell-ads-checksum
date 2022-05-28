@@ -1,0 +1,24 @@
+Get-ChildItem *.* -Recurse -Force | ForEach-Object {
+	$value = $null
+	$value = $_ | Get-Item -stream MD5 -ErrorAction SilentlyContinue | Select-Object -expandproperty Stream
+	if ($value -eq $null) {
+		$_ | Get-FileHash -a md5 | select Hash,Path | Format-List | Out-File -Append md5.txt
+		$_ | Get-ItemProperty | select -expand LastWriteTime | select ticks | fl | out-file -append md5.txt
+		$_ | Get-ItemProperty | select -expand CreationTime | select ticks | fl | out-file -append md5.txt
+		$_ | Select-Object Attributes,FullName,CreationTime,LastWriteTime,Length | fl | out-file -append md5.txt
+		$lastWriteTime = $_.LastWriteTime
+		$_ | Add-Content -Stream MD5 -Value ($_ | Get-FileHash -a md5).Hash -Force
+		$_ | Add-Content -Stream LWT -Value ($_ | Get-ItemProperty | select -expand LastWriteTime | select -expand ticks) -Force
+		$_ | Add-Content -Stream CT -Value ($_ | Get-ItemProperty | select -expand CreationTime | select ticks).ticks -Force
+		$_ | Add-Content -Stream FS -Value ($_ | Select-Object Length).length -Force
+		$cp = $null
+		$cp = $_ | Get-ItemPropertyValue -Name IsReadOnly
+		if ($cp -eq $true) {
+			$_ | Set-ItemProperty -Name IsReadOnly -Value $false
+			$_.LastWriteTime = $lastWriteTime
+			$_ | Set-ItemProperty -Name IsReadOnly -Value $true
+		} else {
+		$_.LastWriteTime = $lastWriteTime
+		}
+	}
+}
