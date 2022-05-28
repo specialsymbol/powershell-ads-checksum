@@ -3,8 +3,6 @@ Get-ChildItem *.* -Recurse -Force | ForEach-Object {
 	$value = $_ | Get-Item -stream MD5 -ErrorAction SilentlyContinue | Select-Object -expandproperty Stream
 	if ($value -eq $null) {
 		$_ | Get-FileHash -a md5 | select Hash,Path | Format-List | Out-File -Append md5.txt
-		$_ | Get-ItemProperty | select -expand LastWriteTime | select ticks | fl | out-file -append md5.txt
-		$_ | Get-ItemProperty | select -expand CreationTime | select ticks | fl | out-file -append md5.txt
 		$_ | Select-Object Attributes,FullName,CreationTime,LastWriteTime,Length | fl | out-file -append md5.txt
 		$lastWriteTime = $_.LastWriteTime
 		$_ | Add-Content -Stream MD5 -Value ($_ | Get-FileHash -a md5).Hash -Force
