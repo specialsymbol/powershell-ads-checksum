@@ -7,9 +7,13 @@ Get-ChildItem *.* -Recurse | ForEach-Object {
 			Write-Output "Difference found in $_"
 		} else {
 		$countc++
+		$csv = $null
+		$csv | Add-Member -Name Filename -Value $_.FullName
+		$csv | Add-Member -Name CreationTime -Value ($_ | Get-ItemProperty | select -expand CreationTime | select ticks).ticks
+		$csv | Add-Member -Name LastWriteTime -Value ($_ | Get-ItemProperty | select -expand LastWriteTime | select ticks).ticks
+		$csv | Add-Member -Name FileSize -Value $_.Length
+		$csv | Export-Csv -Path .\MD5old.csv -Delimiter ';' -NoTypeInformation -Append
 		}
-	} else {
-	Write-Output "No stream present for $_"
 	}
 }
 write-output "$counter files verified, $countc files ok"
