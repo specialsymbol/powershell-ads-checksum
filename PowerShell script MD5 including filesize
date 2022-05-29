@@ -9,7 +9,6 @@ Get-ChildItem *.* -Recurse -Force | ForEach-Object {
     			CreationTime = $_.CreationTime.ticks
 			LastWriteTime = $_.LastWriteTime.ticks
 			FileSize = $_.Length
-			Attributes = $_.Attributes
 			MD5 = ($_ | Get-FileHash -a md5).Hash
 		}
 		$csv | Export-Csv -Path .\MD5list.csv -Delimiter ';' -NoTypeInformation -Append -NoClobber
