@@ -2,8 +2,16 @@ Get-ChildItem *.* -Recurse -Force | ForEach-Object {
 	$value = $null
 	$value = $_ | Get-Item -stream MD5 -ErrorAction SilentlyContinue | Select-Object -expandproperty Stream
 	if ($value -eq $null) {
-		$_ | Get-FileHash -a md5 | select Hash,Path | Format-List | Out-File -Append md5.txt
-		$_ | Select-Object Attributes,FullName,CreationTime,LastWriteTime,Length | fl | out-file -append md5.txt
+		$csv = $null
+		$csv = [pscustomobject]@{
+  			Filename = $_.FullName
+    			CreationTime = $_.CreationTime.ticks
+			LastWriteTime = $_.LastWriteTime.ticks
+			FileSize = $_.Length
+			Attributes = $_.Attributes
+			MD5 = ($_ | Get-FileHash -a md5).Hash
+		}
+		$csv | Export-Csv -Path .\MD5list.csv -Delimiter ';' -NoTypeInformation -Append -NoClobber
 		$lastWriteTime = $_.LastWriteTime
 		$_ | Add-Content -Stream MD5 -Value ($_ | Get-FileHash -a md5).Hash -Force
 		$_ | Add-Content -Stream LWT -Value ($_ | Get-ItemProperty | select -expand LastWriteTime | select -expand ticks) -Force
