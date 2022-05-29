@@ -2,3 +2,6 @@
 Adds checksums to an alternate data stream of files using a powershell script
 
 Seems to run fine. In fact, it does find all files and work as intended - the files I used for testing had one file that already had a valid MD5 alternate data stream. This was correctly ignored in the creation script and correctly verified in the checking script. So all my complaints about get-childitem not finding a file because of a more than three character extension are wrong - I just forgot it already had the MD5 stream.
+
+ToDo: Create functions to streamline the code
+Always check first and create a file with the file info (checksum, CreationTime, LastWriteTime, Length (Filesize)) for files that already have a MD5 stream
