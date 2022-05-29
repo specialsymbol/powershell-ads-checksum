@@ -4,7 +4,8 @@ Get-ChildItem *.* -Recurse -Force | ForEach-Object {
 	if ($value -eq $null) {
 		$csv = $null
 		$csv = [pscustomobject]@{
-  			Filename = $_.FullName
+  			DirectoryName = $_.DirectoryName
+			Name = $_.Name
     			CreationTime = $_.CreationTime.ticks
 			LastWriteTime = $_.LastWriteTime.ticks
 			FileSize = $_.Length
