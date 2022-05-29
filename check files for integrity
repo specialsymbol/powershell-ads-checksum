@@ -9,7 +9,8 @@ Get-ChildItem *.* -Recurse | ForEach-Object {
 		$countc++
 		$csv = $null
 		$csv = [pscustomobject]@{
-  			Filename = $_.FullName
+  			DirectoryName = $_.DirectoryName
+			Name = $_.Name
     			CreationTime = ($_ | Get-ItemProperty | select -expand CreationTime | select ticks).ticks
 			LastWriteTime = ($_ | Get-ItemProperty | select -expand LastWriteTime | select ticks).ticks
 			FileSize = $_.Length
