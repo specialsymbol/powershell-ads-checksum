@@ -1,5 +1,6 @@
 $counter = 0
 $countc = 0
+$countn = 0
 Get-ChildItem *.* -Recurse | ForEach-Object {
 	$counter++
 	if (($_ | Get-Item -stream MD5 -ErrorAction SilentlyContinue | Select-Object -expandproperty Stream) -eq "MD5") {
@@ -7,16 +8,17 @@ Get-ChildItem *.* -Recurse | ForEach-Object {
 			Write-Output "Difference found in $_"
 		} else {
 		$countc++
-		$csv = $null
-		$csv = [pscustomobject]@{
-  			DirectoryName = $_.DirectoryName
-			Name = $_.Name
-    			CreationTime = ($_ | Get-ItemProperty | select -expand CreationTime | select ticks).ticks
-			LastWriteTime = ($_ | Get-ItemProperty | select -expand LastWriteTime | select ticks).ticks
-			FileSize = $_.Length
 		}
-		$csv | Export-Csv -Path .\MD5old.csv -Delimiter ';' -NoTypeInformation -Append -NoClobber
-		}
+	$countn++
+	$csv = $null
+	$csv = [pscustomobject]@{
+  		DirectoryName = $_.DirectoryName
+		Name = $_.Name
+    		CreationTime = ($_ | Get-ItemProperty | select -expand CreationTime | select ticks).ticks
+		LastWriteTime = ($_ | Get-ItemProperty | select -expand LastWriteTime | select ticks).ticks
+		FileSize = $_.Length
+	}
+	$csv | Export-Csv -Path .\NoMD5.csv -Delimiter ';' -NoTypeInformation -Append -NoClobber
 	}
 }
-write-output "$counter files verified, $countc files ok"
+write-output "$counter files verified, $countc files ok, $countn files without MD5"
