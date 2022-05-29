@@ -8,10 +8,12 @@ Get-ChildItem *.* -Recurse | ForEach-Object {
 		} else {
 		$countc++
 		$csv = $null
-		$csv | Add-Member -Name Filename -Value $_.FullName
-		$csv | Add-Member -Name CreationTime -Value ($_ | Get-ItemProperty | select -expand CreationTime | select ticks).ticks
-		$csv | Add-Member -Name LastWriteTime -Value ($_ | Get-ItemProperty | select -expand LastWriteTime | select ticks).ticks
-		$csv | Add-Member -Name FileSize -Value $_.Length
+		$csv = @{
+  			Filename = $_.FullName
+    			CreationTime = ($_ | Get-ItemProperty | select -expand CreationTime | select ticks).ticks
+			LastWriteTime = ($_ | Get-ItemProperty | select -expand LastWriteTime | select ticks).ticks
+			FileSize = $_.Length
+		}
 		$csv | Export-Csv -Path .\MD5old.csv -Delimiter ';' -NoTypeInformation -Append
 		}
 	}
