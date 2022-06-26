@@ -1,3 +1,6 @@
+$date = $null
+$date = @((Date).Year,(Get-Date).ToString("MM"),(Get-Date).ToString("dd"))
+$name = [system.String]::Join("-", $date)+' MD5list.csv'
 Get-ChildItem *.* -Recurse -Force | ForEach-Object {
 	$value = $null
 	$value = $_ | Get-Item -stream MD5 -ErrorAction SilentlyContinue | Select-Object -expandproperty Stream
@@ -11,7 +14,7 @@ Get-ChildItem *.* -Recurse -Force | ForEach-Object {
 			FileSize = $_.Length
 			MD5 = ($_ | Get-FileHash -a md5).Hash
 		}
-		$csv | Export-Csv -Path .\MD5list.csv -Delimiter ';' -NoTypeInformation -Append -NoClobber
+		$csv | Export-Csv -Path .\$name -Delimiter ';' -NoTypeInformation -Append -NoClobber
 		$lastWriteTime = $_.LastWriteTime
 		$_ | Add-Content -Stream MD5 -Value ($_ | Get-FileHash -a md5).Hash -Force
 		$_ | Add-Content -Stream LWT -Value ($_ | Get-ItemProperty | select -expand LastWriteTime | select -expand ticks) -Force
