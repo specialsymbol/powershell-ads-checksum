@@ -1,6 +1,9 @@
 $counter = 0
 $countc = 0
 $countn = 0
+$date = $null
+$date = @((Date).Year,(Get-Date).ToString("MM"),(Get-Date).ToString("dd"))
+$name = [system.String]::Join("-", $date)+' NoMD5Dowx.csv'
 Get-ChildItem *.* -Recurse | ForEach-Object {
 	$counter++
 	if (($_ | Get-Item -stream MD5 -ErrorAction SilentlyContinue | Select-Object -expandproperty Stream) -eq "MD5") {
@@ -9,6 +12,7 @@ Get-ChildItem *.* -Recurse | ForEach-Object {
 		} else {
 		$countc++
 		}
+	} else {
 	$countn++
 	$csv = $null
 	$csv = [pscustomobject]@{
@@ -17,8 +21,7 @@ Get-ChildItem *.* -Recurse | ForEach-Object {
     		CreationTime = ($_ | Get-ItemProperty | select -expand CreationTime | select ticks).ticks
 		LastWriteTime = ($_ | Get-ItemProperty | select -expand LastWriteTime | select ticks).ticks
 		FileSize = $_.Length
-	}
-	$csv | Export-Csv -Path .\NoMD5.csv -Delimiter ';' -NoTypeInformation -Append -NoClobber
+	$csv | Export-Csv -Path .\$name -Delimiter ';' -NoTypeInformation -Append -NoClobber
 	}
 }
 write-output "$counter files verified, $countc files ok, $countn files without MD5"
