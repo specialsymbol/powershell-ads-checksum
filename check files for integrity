@@ -3,7 +3,7 @@ $countc = 0
 $countn = 0
 $date = $null
 $date = @((Date).Year,(Get-Date).ToString("MM"),(Get-Date).ToString("dd"))
-$name = [system.String]::Join("-", $date)+' NoMD5Dowx.csv'
+$name = [system.String]::Join("-", $date)+' NoMD5.csv'
 Get-ChildItem *.* -Recurse | ForEach-Object {
 	$counter++
 	if (($_ | Get-Item -stream MD5 -ErrorAction SilentlyContinue | Select-Object -expandproperty Stream) -eq "MD5") {
